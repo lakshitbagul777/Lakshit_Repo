@@ -1,0 +1,126 @@
+13.Create the following tables.
+1)PUBLISHER( PID , PNAME ,ADDRESS ,STATE ,PHONE ,EMAILID );
+2)BOOK( ISBN ,BOOK_TITLE , CATEGORY , PRICE , COPYRIGHT_DATE , YEAR ,PAGE_COUNT ,PID );
+3) AUTHOR(AID,ANAME,STATE,CITY ,ZIP,PHONE,URL )
+4) AUTHOR_BOOK(AID,ISBN);
+5) REVIEW(RID,ISBN,RATING);
+
+CREATE TABLE PUBLISHER (
+    PID INT PRIMARY KEY,
+    PNAME VARCHAR(255),
+    ADDRESS VARCHAR(255),
+    STATE VARCHAR(255),
+    PHONE VARCHAR(15),
+    EMAILID VARCHAR(255)
+);
+
+CREATE TABLE BOOK (
+    ISBN INT PRIMARY KEY,
+    BOOK_TITLE VARCHAR(255),
+    CATEGORY VARCHAR(255),
+    PRICE DECIMAL(10, 2),
+    COPYRIGHT_DATE DATE,
+    YEAR INT,
+    PAGE_COUNT INT,
+    PID INT
+ 
+);
+
+CREATE TABLE AUTHOR (
+    AID INT PRIMARY KEY,
+    ANAME VARCHAR(255),
+    STATE VARCHAR(255),
+    CITY VARCHAR(255),
+    ZIP VARCHAR(10),
+    PHONE VARCHAR(15),
+    URL VARCHAR(255)
+);
+
+CREATE TABLE AUTHOR_BOOK (
+    AID INT,
+    ISBN INT,
+    FOREIGN KEY (AID) REFERENCES AUTHOR(AID),
+    FOREIGN KEY (ISBN) REFERENCES BOOK(ISBN)
+);
+
+CREATE TABLE REVIEW (
+    RID INT PRIMARY KEY,
+    ISBN INT,
+    RATING INT,
+    FOREIGN KEY (ISBN) REFERENCES BOOK(ISBN)
+);
+
+Solve following queries by SQL
+1. Retrieve city, phone, url of author whose name is ‘CHETAN BHAGAT’.
+
+SELECT CITY, PHONE, URL
+FROM AUTHOR
+WHERE ANAME = 'CHETAN BHAGAT';
+
+2. Retrieve book title, reviewable id and rating of all books.
+
+SELECT B.BOOK_TITLE, R.ISBN, R.RATING
+FROM BOOK B
+JOIN REVIEW R ON B.ISBN = R.ISBN;
+
+3. Retrieve book title, price, author name and url for publishers ‘MEHTA’.
+
+SELECT B.BOOK_TITLE, B.PRICE, A.ANAME, A.URL
+FROM BOOK B
+JOIN AUTHOR_BOOK AB ON B.ISBN = AB.ISBN
+JOIN AUTHOR A ON AB.AID = A.AID
+WHERE B.PID IN (SELECT PID FROM PUBLISHER WHERE PNAME = 'MEHTA');
+
+4. In a PUBLISHER relation change the phone number of ‘MEHTA’ to 123456
+
+UPDATE PUBLISHER
+SET PHONE = '123456'
+WHERE PNAME = 'MEHTA';
+
+5. Calculate and display the average, maximum, minimum price of each publisher.
+
+SELECT PNAME, AVG(PRICE) AS AVG_PRICE, MAX(PRICE) AS MAX_PRICE, MIN(PRICE) AS MIN_PRICE
+FROM PUBLISHER
+JOIN BOOK ON PUBLISHER.PID = BOOK.PID
+GROUP BY PNAME;
+
+6. Delete details of all books having a page count less than 100.
+
+DELETE FROM BOOK
+WHERE PAGE_COUNT < 100;
+
+7. Retrieve details of all authors residing in city Pune and whose name begins with character
+‘C’.
+
+SELECT *
+FROM AUTHOR
+WHERE CITY = 'Pune' AND ANAME LIKE 'C%';
+
+8. Retrieve details of authors residing in same city as ‘Korth’.
+
+SELECT A.ANAME, A.STATE, A.CITY
+FROM AUTHOR A
+WHERE A.CITY = (SELECT CITY FROM AUTHOR WHERE ANAME = 'Korth');
+
+9. Create a procedure to update the value of page count of a book of given ISBN.
+
+DELIMITER //
+CREATE PROCEDURE UpdatePageCount(IN bookISBN INT, IN newPageCount INT)
+BEGIN
+    UPDATE BOOK
+    SET PAGE_COUNT = newPageCount
+    WHERE ISBN = bookISBN;
+END;
+//
+DELIMITER ;
+10. Create a function that returns the price of book with a given ISBN.
+DELIMITER //
+CREATE FUNCTION GetBookPrice(bookISBN INT) RETURNS DECIMAL(10, 2)
+BEGIN
+    DECLARE bookPrice DECIMAL(10, 2);
+    SELECT PRICE INTO bookPrice FROM BOOK WHERE ISBN = bookISBN;
+    RETURN bookPrice;
+END;
+//
+DELIMITER ;
+

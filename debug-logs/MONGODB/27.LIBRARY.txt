@@ -1,0 +1,33 @@
+1.Create a database called 'library':
+use library
+
+
+2.Create a collection called 'books' and insert some sample data:
+db.createCollection("books")
+db.books.insertMany([
+  { title: "Book1", pages: 200 },
+  { title: "Book2", pages: 300 },
+  { title: "Book3", pages: 180 },
+  { title: "Book4", pages: 270 }
+])
+
+
+3.Create a MapReduce function to categorize books as small or big:
+var mapFunction = function() {
+    var category = this.pages <= 250 ? "small" : "big";
+    emit(category, 1);
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.books.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "bookCategories" }
+);
+
+// Query to retrieve the result
+db.bookCategories.find();
+

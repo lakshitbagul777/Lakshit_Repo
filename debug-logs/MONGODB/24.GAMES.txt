@@ -1,0 +1,38 @@
+
+1.Create a collection called 'games':
+db.createCollection("games")
+
+2.Add 5 games to the database:
+db.games.insertMany([
+  { name: "Game1", gametype: "Action", rating: 85 },
+  { name: "Game2", gametype: "Adventure", rating: 90 },
+  { name: "Game3", gametype: "Puzzle", rating: 78 },
+  { name: "Game4", gametype: "Racing", rating: 92 },
+  { name: "Game5", gametype: "Strategy", rating: 88 }
+])
+
+3.Query to return all games:
+db.games.find()
+
+
+4.Query to return the 3 highest rated games:
+db.games.find().sort({ rating: -1 }).limit(3)
+
+
+5.Update your two favorite games to have two achievements:
+db.games.updateMany(
+  { name: { $in: ["Game1", "Game3"] } },
+  { $set: { achievements: ["Game Master", "Speed Demon"] } }
+)
+
+
+6.Query to return games that have both 'Game Master' and 'Speed Demon' achievements:
+db.games.find({ achievements: { $all: ["Game Master", "Speed Demon"] } })
+
+
+7.Query to return only games that have achievements:
+db.games.find({ achievements: { $exists: true, $ne: [] } })
+
+
+
+

@@ -1,0 +1,68 @@
+a) Write an SQL code block these raise a user defined exception where business rule is voilated. BR for client_ master table specifies when the value of bal_due field is less than 0 handle the exception.
+
+Answer
+create database bussiness;
+use bussiness;
+create table client_master(clientid int, bal_due int);
+insert into client_master values (1,100);
+insert into client_master values (2,-10);
+
+delimiter $$ 
+CREATE PROCEDURE CheckBalDue3(clientid int)
+begin
+declare bal_due_value int;
+select bal_due into bal_due_value from client_master where client_master.clientid=clientid;
+IF bal_due_value < 0 THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Business rule violation: bal_due value is less than 0';
+END IF;
+end;
+$$
+
+call CheckBalDue3(2);
+$$
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+b) Write an SQL code block
+Borrow(Roll_no, Name, DateofIssue, NameofBook, Status)
+Fine(Roll_no,Date,Amt)
+Accept roll_no & name of book from user. Check the number of days (from date of issue), if days are between 15 to 30 then fine amount will be Rs 5per day. If no. of days>30, per day fine will be Rs 50 per day & for days less than 30, Rs. 5 per day. After submitting the book, status will change from I to R. If condition of fine is true, then details will be stored into fine table. Also handles the exception by named exception handler or user define exception handler.
+
+Answer
+create database fine;
+use fine;
+
+create table Fine (roll_no int, Date date, Amount int);
+
+create table Borrower (roll_no int AUTO_INCREMENT, Name varchar(50), Date_of_issue date, Book_name varchar(50), Status varchar(10), primary key (roll_no));
+
+insert into Borrower (Name, Date_of_issue, Book_name, Status) values ("isha", "2023-08-15","TOC", "Issued"), ("Anjali", "2023-06-13","CN", "Issued"), ("Krutika", "2023-08-20", "TOC", "Issued"), ("Asmi", "2023-06-24", "ISEM", "Issued"), ("Tejsvini", "2023-07-23", "DBMS", "Issued");
+
+Delimiter $$
+create procedure studfine(roll int, nm varchar(50))
+begin
+declare i_date date;
+declare diff int;
+declare fine_amt int;
+DECLARE EXIT HANDLER FOR SQLEXCEPTION SELECT"Table not found";
+select Date_of_issue into i_date from Borrower where roll_no=roll and Name=nm;
+select DATEDIFF(CURDATE(),i_date) into diff;
+if(diff>=15 and diff<=30)
+then
+set fine_amt=diff*5;
+insert into Fine values (roll, CURDATE(), fine_amt);
+elseif(diff>30)
+then
+set fine_amt=diff*50;
+insert into Fine values (roll, CURDATE(), fine_amt);
+end if;
+update Borrower set Status="Return" where roll_no=roll and Name=nm;
+end $$
+
+call studfine(3,"Krutika");
+$$
+
+select * from Fine;
+$$

@@ -1,0 +1,36 @@
+***Import zip.json:
+mongoimport --jsonArray --db yourDBname --collection yourCollectionName --file path/to/zip.json
+
+
+Replace yourDBname with the name of your MongoDB database and yourCollectionName with the name of your collection.
+
+
+
+
+
+
+1.Create Indexes:
+	A.Single Field Index:
+	db.yourCollectionName.createIndex({ "population": 1 })
+
+	B.Composite Index:
+	db.yourCollectionName.createIndex({ "state": 1, "city": 1 })
+
+	C.Multikey Index (assuming you have an array field called "locations"):
+	db.yourCollectionName.createIndex({ "locations": 1 }, { multikey: true })
+
+2.Fire Queries:
+	
+	A.Display all cities having population above 1600:
+	db.yourCollectionName.find({ "population": { $gt: 1600 } })
+
+	B.Display all cities in state "KS":
+	db.yourCollectionName.find({ "state": "KS" })
+
+	C.Display location of city "TIMKEN" (assuming you have a field called "city" 	and a field called "locations"):
+	db.yourCollectionName.findOne({ "city": "TIMKEN" }, { "locations": 1, "_id": 	0 })
+
+	
+	
+
+	

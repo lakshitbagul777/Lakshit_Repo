@@ -1,0 +1,40 @@
+1. Get the count of Males and Females:
+var mapFunction = function() {
+    emit(this.gender, 1);
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.collectionName.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "genderCount" }
+);
+
+// Query to retrieve the result
+db.genderCount.find();
+
+
+2.Count the number of users in each hobby:
+var mapFunction = function() {
+    var hobbies = this.hobbies.split(",");
+    for (var i = 0; i < hobbies.length; i++) {
+        emit(hobbies[i], 1);
+    }
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.collectionName.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "hobbyCount" }
+);
+
+// Query to retrieve the result
+db.hobbyCount.find();
+

@@ -1,0 +1,80 @@
+16.
+A)The bank manager has decided to activate all those accounts which were previously marked as
+inactive for performing no transaction in last 365 days. Write a PL/SQ block (using implicit
+cursor) to update the status of account, display an approximate message based on the no. of rows
+affected by the update. (Use of %FOUND, %NOTFOUND, %ROWCOUNT)
+
+Answer
+
+ create database cursor_bank;
+ use cursor_bank;
+CREATE TABLE accounts (account_id INT PRIMARY KEY,account_status VARCHAR(20),days_since_last_transaction INT);
+INSERT INTO accounts (account_id, account_status, days_since_last_transaction)VALUES(1, 'Active', 5),    (2, 'Inactive', 400), (3, 'Active', 10),   (4, 'Inactive', 500);
+
+DELIMITER //
+CREATE PROCEDURE UpdateAccountStatus()
+BEGIN
+DECLARE v_updated_count INT;
+UPDATE accounts
+SET account_status = 'Active'
+WHERE days_since_last_transaction > 365;
+SELECT ROW_COUNT() INTO v_updated_count;
+IF v_updated_count = 0 THEN
+SELECT 'No accounts were activated.' AS Message;
+ELSEIF v_updated_count = 1 THEN
+SELECT '1 account was activated.' AS Message;
+ELSE
+SELECT CONCAT(v_updated_count, ' accounts were activated.') AS Message;
+END IF;
+END;
+//
+
+call UpdateAccountStatus();
+//
+
+
+B)Organization has decided to increase the salary of employees by 10% of existing salary, who
+are having salary less than average salary of organization, Whenever such salary updates takes
+place, a record for the same is maintained in the increment_salary table.
+
+Answer
+
+Create database employee;
+use employee;
+CREATE TABLE employees (employee_id INT PRIMARY KEY,employee_name VARCHAR(255),salary DECIMAL(10, 2));
+INSERT INTO employees (employee_id, employee_name, salary)
+VALUES(1, 'John', 40000.00),(2, 'Alice', 35000.00),(3, 'Bob', 42000.00),(4, 'Eve', 38000.00);
+
+CREATE TABLE increment_salary (increment_id INT PRIMARY KEY,employee_id INT,old_salary DECIMAL(10, 2),new_salary DECIMAL(10, 2));
+
+INSERT INTO increment_salary (increment_id, employee_id, old_salary, new_salary)
+VALUES(1, 1, 40000.00, 44000.00),(2, 3, 42000.00, 46200.00),(3, 4, 38000.00, 41800.00);
+
+
+
+DELIMITER //
+CREATE PROCEDURE IncrementSalaries()
+BEGIN
+DECLARE avg_salary DECIMAL(10, 2);
+DECLARE increment_id INT;
+SELECT AVG(salary) INTO avg_salary FROM employees;
+UPDATE employees
+SET salary = salary * 1.10
+WHERE salary < avg_salary;
+SET increment_id = UNIX_TIMESTAMP(NOW());
+INSERT INTO increment_salary (increment_id, employee_id, old_salary, new_salary)
+SELECT increment_id, employee_id, (salary / 1.10), salary
+FROM employees
+WHERE salary < avg_salary;
+END;
+//
+
+CALL IncrementSalaries();
+//
+
+
+
+
+
+
+

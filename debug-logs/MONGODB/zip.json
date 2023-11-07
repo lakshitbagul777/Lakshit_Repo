@@ -1,0 +1,45 @@
+[
+
+    {
+        "State":"Maharashtra",
+        "City":"Pune",
+        "Population":2000,
+        "locations":"a"
+    },
+    {
+        "State":"Maharashtra",
+        "City":"Mumbai",
+        "Population":1000,
+        "locations":"a"
+    },
+    {
+        "State":"Gujarat",
+        "City":"Ahmedabad",
+        "Population":5000,
+        "locations":"a"
+    },
+    {
+        "State":"West Bengal",
+        "City":"Kolkata",
+        "Population":2000,
+        "locations":"a"
+    },
+    {
+        "State":"Punjab",
+        "City":"Amritsar",
+        "Population":2000,
+        "locations":"c"
+    },
+    {
+        "State":"KS",
+        "City":"Pune",
+        "Population":2000
+    },
+    {
+        "State":"CAN",
+        "City":"TIMKEN",
+        "Population":2000,
+        "locations":"Abvs"
+    }
+
+]

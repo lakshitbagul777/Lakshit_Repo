@@ -1,0 +1,79 @@
+// Step 1: Connect to MongoDB and create database DYPIT
+use DYPIT
+
+// Step 2: Create Teachers collection
+db.createCollection("Teachers")
+
+// Step 3: Create Students collection
+db.createCollection("Students")
+
+// Insert data into Teachers collection
+db.Teachers.insert({
+    Tname: "John Doe",
+    dno: "D001",
+    dname: "Computer",
+    experience: 5,
+    salary: 12000,
+    date_of_joining: new Date("2022-01-01")
+})
+
+// Insert data into Students collection
+db.Students.insert({
+    Sname: "Alice",
+    roll_no: 1,
+    class: "X"
+})
+
+
+
+1.Display the department-wise average salary:
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", avgSalary: { $avg: "$salary" } } }
+])
+
+2.Display the number of employees working in each department:
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", count: { $sum: 1 } } }
+])
+
+3.Display the department-wise total salary of departments having total salary greater than or equal to 50000/-:
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", totalSalary: { $sum: "$salary" } } },
+    { $match: { totalSalary: { $gte: 50000 } } }
+])
+
+4.Queries using different operators (max, min, etc.):
+// Find the department with the highest average salary
+db.Teachers.aggregate([
+    { $group: { _id: "$dname", avgSalary: { $avg: "$salary" } } },
+    { $sort: { avgSalary: -1 } },
+    { $limit: 1 }
+])
+
+// Find the teacher with the highest salary
+db.Teachers.findOne({}, { sort: { salary: -1 } })
+
+// Find the teacher with the lowest salary
+db.Teachers.findOne({}, { sort: { salary: 1 } })
+
+
+5.Create a unique index on the "Tname" field in the Teachers collection:
+db.Teachers.createIndex({ Tname: 1 }, { unique: true })
+
+
+6.Create a compound index on "dname" and "experience" fields in the Teachers collection:
+db.Teachers.createIndex({ dname: 1, experience: 1 })
+
+7.Show all the indexes created in the database DYPIT:
+db.getCollectionInfos({ name: "Teachers" })[0].indexes()
+db.getCollectionInfos({ name: "Students" })[0].indexes()
+
+8.Show all the indexes created in the above collections:
+db.Teachers.getIndexes()
+db.Students.getIndexes()
+
+
+
+
+
+

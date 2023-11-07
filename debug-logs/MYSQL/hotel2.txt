@@ -1,0 +1,117 @@
+
+//hotel 2;
+-- Create tables
+CREATE TABLE Hotel (
+    HotelNo INT PRIMARY KEY,
+    Name VARCHAR(255),
+    City VARCHAR(255)
+);
+
+CREATE TABLE Room (
+    RoomNo INT,
+    HotelNo INT,
+    Type VARCHAR(255),
+    Price DECIMAL(10, 2),
+    PRIMARY KEY (HotelNo, RoomNo),
+    FOREIGN KEY (HotelNo) REFERENCES Hotel(HotelNo)
+);
+
+CREATE TABLE Booking (
+    HotelNo INT,
+    GuestNo INT,
+    DateFrom DATE,
+    DateTo DATE,
+    RoomNo INT,
+    PRIMARY KEY (HotelNo, GuestNo, DateFrom),
+    FOREIGN KEY (HotelNo, RoomNo) REFERENCES Room(HotelNo, RoomNo)
+);
+
+CREATE TABLE Guest (
+    GuestNo INT PRIMARY KEY,
+    GuestName VARCHAR(255),
+    GuestAddress VARCHAR(255)
+);
+
+-- Insert sample data
+INSERT INTO Hotel (HotelNo, Name, City) VALUES
+(1, 'Grosvenor Hotel', 'London'),
+(2, 'Grand Hotel', 'New York'),
+(3, 'Ocean View Hotel', 'Miami');
+
+INSERT INTO Room (RoomNo, HotelNo, Type, Price) VALUES
+(101, 1, 'Single', 100),
+(102, 1, 'Double', 150),
+(201, 2, 'Single', 120),
+(202, 2, 'Double', 180),
+(301, 3, 'Single', 90),
+(302, 3, 'Double', 140);
+
+INSERT INTO Guest (GuestNo, GuestName, GuestAddress) VALUES
+(1, 'John Smith', '123 Main St, London'),
+(2, 'Alice Johnson', '456 Elm St, New York'),
+(3, 'Bob Davis', '789 Oak St, Miami');
+
+INSERT INTO Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo) VALUES
+(1, 1, '2023-11-01', '2023-11-05', 101),
+(2, 2, '2023-11-02', '2023-11-06', 201),
+(3, 3, '2023-11-03', '2023-11-07', 301);
+
+
+//hotel3
+-- Create tables
+CREATE TABLE Hotel (
+    HotelNo INT PRIMARY KEY,
+    Name VARCHAR(255),
+    City VARCHAR(255)
+);
+
+CREATE TABLE Room (
+    RoomNo INT PRIMARY KEY,
+    HotelNo INT,
+    Type VARCHAR(255),
+    Price DECIMAL(10, 2),
+    FOREIGN KEY (HotelNo) REFERENCES Hotel(HotelNo)
+);
+
+CREATE TABLE Booking (
+    HotelNo INT,
+    GuestNo INT,
+    DateFrom DATE,
+    DateTo DATE,
+    RoomNo INT,
+    FOREIGN KEY (HotelNo, RoomNo) REFERENCES Room(HotelNo, RoomNo)
+);
+
+CREATE TABLE Guest (
+    GuestNo INT PRIMARY KEY,
+    GuestName VARCHAR(255),
+    GuestAddress VARCHAR(255)
+);
+
+-- Insert sample data
+INSERT INTO Hotel (HotelNo, Name, City) VALUES
+(1, 'Grosvenor Hotel', 'London'),
+(2, 'Grand Hotel', 'New York'),
+(3, 'Ocean View Hotel', 'Miami');
+
+INSERT INTO Room (RoomNo, HotelNo, Type, Price) VALUES
+(101, 1, 'Single', 50.00),
+(102, 1, 'Double', 70.00),
+(201, 2, 'Double', 80.00),
+(202, 2, 'Family', 100.00),
+(301, 3, 'Single', 60.00),
+(302, 3, 'Family', 90.00);
+
+INSERT INTO Guest (GuestNo, GuestName, GuestAddress) VALUES
+(1, 'John Smith', '123 Main St, London'),
+(2, 'Alice Johnson', '456 Elm St, New York'),
+(3, 'Bob Davis', '789 Oak St, Miami');
+
+INSERT INTO Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo) VALUES
+(1, 1, '2023-08-10', '2023-08-15', 101),
+(1, 2, '2023-08-12', '2023-08-18', 102),
+(2, 3, '2023-08-14', '2023-08-20', 202),
+(3, 1, '2023-08-11', '2023-08-17', 301);
+
+
+

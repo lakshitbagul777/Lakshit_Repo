@@ -1,0 +1,117 @@
+[{
+  "_id": {
+    "$oid": "6545df4bac250dfc96102160"
+  },
+  "Tname": "Anushka",
+  "dno": "1",
+  "dname": "Computer",
+  "experience": 5,
+  "salary": 300000,
+  "date_of_joining": "15/11/2003"
+},{
+  "_id": {
+    "$oid": "6545dfe5ac250dfc96102161"
+  },
+  "Tname": "Holmes",
+  "dno": 2,
+  "dname": "Electrical",
+  "experience": 6,
+  "salary": 300000,
+  "date_of_joining": "25/11/2003"
+},{
+  "_id": {
+    "$oid": "6545dfe5ac250dfc96102162"
+  },
+  "Tname": "Potter",
+  "dno": "1",
+  "dname": "Computer",
+  "experience": 8,
+  "salary": 900000,
+  "date_of_joining": "30/1/2006"
+},{
+  "_id": {
+    "$oid": "65463f903d2adc56e3e62046"
+  },
+  "Tname": "Holmes",
+  "dno": 2,
+  "dname": "Electrical",
+  "experience": 6,
+  "salary": 300000,
+  "date_of_joining": "25/11/2003"
+},{
+  "_id": {
+    "$oid": "65463f903d2adc56e3e62047"
+  },
+  "Tname": "Potter",
+  "dno": "1",
+  "dname": "Computer",
+  "experience": 8,
+  "salary": 900000,
+  "date_of_joining": "30/1/2006"
+},{
+  "_id": {
+    "$oid": "654640cd3d2adc56e3e62048"
+  },
+  "Tname": "Smith",
+  "dno": 1,
+  "dname": "Computer",
+  "experience": 8,
+  "salary": 450000,
+  "date_of_joining": "10/03/2010"
+},{
+  "_id": {
+    "$oid": "6546413f3d2adc56e3e62049"
+  },
+  "Tname": "Johnson",
+  "dno": 3,
+  "dname": "IT",
+  "experience": 5,
+  "salary": 380000,
+  "date_of_joining": "15/06/2015"
+},{
+  "_id": {
+    "$oid": "6546413f3d2adc56e3e6204a"
+  },
+  "Tname": "Williams",
+  "dno": 4,
+  "dname": "E&TC",
+  "experience": 7,
+  "salary": 420000,
+  "date_of_joining": "20/09/2008"
+},{
+  "_id": {
+    "$oid": "6546413f3d2adc56e3e6204b"
+  },
+  "Tname": "Brown",
+  "dno": 1,
+  "dname": "Computer",
+  "experience": 6,
+  "salary": 430000,
+  "date_of_joining": "05/12/2012"
+},{
+  "_id": {
+    "$oid": "6546413f3d2adc56e3e6204c"
+  },
+  "Tname": "Davis",
+  "dno": 3,
+  "dname": "IT",
+  "experience": 4,
+  "salary": 360000,
+  "date_of_joining": "18/08/2016"
+},{
+  "_id": {
+    "$oid": "6546413f3d2adc56e3e6204d"
+  },
+  "Tname": "Jones",
+  "dno": 4,
+  "dname": "E&TC",
+  "experience": 9,
+  "salary": 480000,
+  "date_of_joining": "25/04/2007"
+},{
+  "_id": {
+    "$oid": "654641bb55d9966f88c35adb"
+  },
+  "Tname": "praveen",
+  "experience": 10
+}]

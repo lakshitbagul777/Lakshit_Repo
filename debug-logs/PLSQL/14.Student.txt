@@ -1,0 +1,70 @@
+a) Consider table Stud(Roll, Att,Status)
+Write a PL/SQL block for following requirement and handle the exceptions. Roll no. of student will be entered by user. Attendance of roll no. entered by user will be checked in Stud table. If attendance is less than 75% then display the message “Term not granted” and set the status in stud table as “D”. Otherwise display message “Term granted” and set the status in stud table as “ND”
+
+Answer
+create database student;
+use student;
+
+create table stud(Roll int primary key, att int, status char(2));
+INSERT INTO stud (Roll, att, status) VALUES(1, 80, 'ND'), (2, 70, 'D'), (3, 90, 'ND'), (4, 60, 'D');
+
+DELIMITER //
+CREATE PROCEDURE CheckAttendance(IN p_roll INT)
+begin
+DECLARE v_attendance INT;
+DECLARE v_status CHAR(2);
+SELECT att INTO v_attendance FROM stud WHERE Roll = p_roll;
+IF v_attendance < 75 THEN
+SET v_status = 'D';
+SELECT 'Term not granted' AS Message;
+else
+SET v_status = 'ND';
+SELECT 'Term granted' AS Message;
+END IF;
+UPDATE stud SET status = v_status WHERE Roll = p_roll;
+END;
+//
+
+CALL CheckAttendance(2);
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+b) Write a PL/SQL block for following requirement using user defined exception handling. The account_master table records the current balance for an account, which is updated whenever, any deposits or withdrawals takes place. If the withdrawal attempted is more than the current balance held in the account. The user defined exception is raised, displaying an appropriate message. Write a PL/SQL block for above requirement using user defined exception handling.
+
+Answer
+create database my_bank_database;
+use my_bank_database;
+CREATE TABLE account_master (account_number INT PRIMARY KEY,account_holder_name VARCHAR(255),balance DECIMAL(10, 2));
+INSERT INTO account_master (account_number, account_holder_name, balance) VALUES (12345, 'John Doe', 1000.00);
+INSERT INTO account_master (account_number, account_holder_name, balance) VALUES (67890, 'Jane Smith', 2500.00);
+
+delimiter $$
+CREATE PROCEDURE perform_withdrawal (p_account_number int,p_withdrawal_amount int) 
+BEGIN
+declare v_account_balance int ;
+SELECT balance INTO v_account_balance FROM account_master WHERE account_master.account_number = p_account_number;
+IF p_withdrawal_amount > v_account_balance THEN
+SIGNAL SQLSTATE '45000'
+SET MESSAGE_TEXT = 'Insufficient balance to make the withdrawal';
+ELSE
+UPDATE account_master SET balance = balance - p_withdrawal_amount WHERE account_number = p_account_number;
+COMMIT;
+END IF;
+END;
+$$
+
+call perform_withdrawal(12345, 1500);
+$$
+
+call perform_withdrawal(12345, 100);
+$$
+
+
+
+
+
+
+
+
+
+

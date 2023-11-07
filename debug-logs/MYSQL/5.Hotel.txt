@@ -1,0 +1,110 @@
+5. The following tables form part of a database held in a relational DBMS:
+Hotel (HotelNo, Name, City) HotelNo is the primary key
+Room (RoomNo, HotelNo, Type, Price)
+Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo)
+Guest (GuestNo, GuestName, GuestAddress)
+Solve following queries by SQL
+
+-- Create tables
+CREATE TABLE Hotel (
+    HotelNo INT PRIMARY KEY,
+    Name VARCHAR(255),
+    City VARCHAR(255)
+);
+
+CREATE TABLE Room (
+    RoomNo INT PRIMARY KEY,
+    HotelNo INT,
+    Type VARCHAR(255),
+    Price DECIMAL(10, 2),
+    FOREIGN KEY (HotelNo) REFERENCES Hotel(HotelNo)
+);
+
+CREATE TABLE Booking (
+    HotelNo INT,
+    GuestNo INT,
+    DateFrom DATE,
+    DateTo DATE,
+    RoomNo INT,
+    FOREIGN KEY (HotelNo, RoomNo) REFERENCES Room(HotelNo, RoomNo)
+);
+
+CREATE TABLE Guest (
+    GuestNo INT PRIMARY KEY,
+    GuestName VARCHAR(255),
+    GuestAddress VARCHAR(255)
+);
+
+-- Insert sample data
+INSERT INTO Hotel (HotelNo, Name, City) VALUES
+(1, 'Grosvenor Hotel', 'London'),
+(2, 'Grand Hotel', 'New York');
+
+INSERT INTO Room (RoomNo, HotelNo, Type, Price) VALUES
+(101, 1, 'Single', 50.00),
+(102, 1, 'Double', 70.00),
+(201, 2, 'Double', 80.00),
+(202, 2, 'Family', 100.00);
+
+INSERT INTO Guest (GuestNo, GuestName, GuestAddress) VALUES
+(1, 'John Smith', '123 Main St, London'),
+(2, 'Alice Johnson', '456 Elm St, New York');
+
+INSERT INTO Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo) VALUES
+(1, 1, '2023-08-01', '2023-08-10', 101),
+(1, 2, '2023-08-05', '2023-08-12', 102),
+(2, 1, '2023-08-02', '2023-08-11', 201),
+(2, 2, '2023-08-03', '2023-08-08', 202);
+
+-- Queries
+-- 1. List full details of all hotels.
+SELECT * FROM Hotel;
+
+-- 2. How many hotels are there?
+SELECT COUNT(*) FROM Hotel;
+
+-- 3. List the price and type of all rooms at the Grosvenor Hotel.
+SELECT Type, Price FROM Room WHERE HotelNo = 1;
+
+-- 4. List the number of rooms in each hotel.
+SELECT h.Name, COUNT(r.RoomNo) AS NumRooms
+FROM Hotel h
+LEFT JOIN Room r ON h.HotelNo = r.HotelNo
+GROUP BY h.Name;
+
+-- 5. List all guests currently staying at the Grosvenor Hotel.
+SELECT g.GuestName
+FROM Guest g
+JOIN Booking b ON g.GuestNo = b.GuestNo
+JOIN Room r ON b.HotelNo = r.HotelNo AND b.RoomNo = r.RoomNo
+WHERE r.HotelNo = 1 AND CURDATE() BETWEEN b.DateFrom AND b.DateTo;
+
+-- 6. List all double or family rooms with a price below £40.00 per night, in ascending order of price.
+SELECT * 
+FROM Room 
+WHERE (Type = 'Double' OR Type = 'Family') AND Price < 40.00
+ORDER BY Price ASC;
+
+-- 7. How many different guests have made bookings for August?
+SELECT COUNT(DISTINCT GuestNo)
+FROM Booking
+WHERE MONTH(DateFrom) = 8;
+
+-- 8. What is the total income from bookings for the Grosvenor Hotel today?
+SELECT SUM(r.Price)
+FROM Booking b
+JOIN Room r ON b.HotelNo = r.HotelNo AND b.RoomNo = r.RoomNo
+WHERE b.HotelNo = 1 AND CURDATE() BETWEEN b.DateFrom AND b.DateTo;
+
+-- 9. What is the most commonly booked room type for each hotel in London?
+SELECT h.Name, r.Type, COUNT(*) AS BookingCount
+FROM Hotel h
+JOIN Room r ON h.HotelNo = r.HotelNo
+JOIN Booking b ON r.HotelNo = b.HotelNo AND r.RoomNo = b.RoomNo
+WHERE h.City = 'London'
+GROUP BY h.Name, r.Type
+ORDER BY BookingCount DESC;
+
+-- 10. Update the price of all rooms by 5%.
+UPDATE Room SET Price = Price * 1.05;
+

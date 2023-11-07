@@ -1,0 +1,159 @@
+//3.	The following tables form part of a database held in a relational DBMS: Hotel (HotelNo, Name, City) HotelNo is the primary key
+//Room (RoomNo, HotelNo, Type, Price)
+//Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo)
+//Guest (GuestNo, GuestName, GuestAddress) GuestNo is primary key
+//Room contains room details for each hotel and (HotelNo, RoomNo) forms the primary key.Booking contains details of the bookings and the //primary key comprises (HotelNo, GuestNo and DateFrom)
+//Solve following queries by SQL
+
+-- Create the database
+CREATE DATABASE HotelDB;
+
+-- Use the database
+USE HotelDB;
+
+-- Create the 'Hotel' table
+CREATE TABLE Hotel (
+  HotelNo INT PRIMARY KEY,
+  Name VARCHAR(255),
+  City VARCHAR(255)
+);
+
+-- Insert data into the 'Hotel' table
+INSERT INTO Hotel (HotelNo, Name, City)
+VALUES
+  (1, 'Grosvenor Hotel', 'London'),
+  (2, 'Hilton Hotel', 'New York'),
+  (3, 'Marriott Hotel', 'Los Angeles');
+
+-- Create the 'Room' table
+CREATE TABLE Room (
+  RoomNo INT,
+  HotelNo INT,
+  Type VARCHAR(255),
+  Price DECIMAL(10, 2),
+  PRIMARY KEY (HotelNo, RoomNo)
+);
+
+-- Insert data into the 'Room' table
+INSERT INTO Room (RoomNo, HotelNo, Type, Price)
+VALUES
+  (101, 1, 'Single', 100.00),
+  (102, 1, 'Double', 150.00),
+  (201, 2, 'Single', 120.00),
+  (202, 2, 'Double', 180.00),
+  (301, 3, 'Single', 110.00),
+  (302, 3, 'Double', 160.00);
+
+-- Create the 'Booking' table
+CREATE TABLE Booking (
+  HotelNo INT,
+  GuestNo INT,
+  DateFrom DATE,
+  DateTo DATE,
+  RoomNo INT,
+  PRIMARY KEY (HotelNo, GuestNo, DateFrom),
+  FOREIGN KEY (HotelNo, RoomNo) REFERENCES Room(HotelNo, RoomNo)
+);
+
+-- Insert data into the 'Booking' table
+INSERT INTO Booking (HotelNo, GuestNo, DateFrom, DateTo, RoomNo)
+VALUES
+  (1, 1, '2023-01-01', '2023-01-05', 101),
+  (1, 2, '2023-02-10', '2023-02-15', 102),
+  (2, 3, '2023-03-20', '2023-03-25', 201),
+  (2, 4, '2023-04-05', '2023-04-10', 202),
+  (3, 5, '2023-05-15', '2023-05-20', 301),
+  (3, 6, '2023-04-30', '2023-05-05', 302);
+
+-- Create the 'Guest' table
+CREATE TABLE Guest (
+  GuestNo INT PRIMARY KEY,
+  GuestName VARCHAR(255),
+  GuestAddress VARCHAR(255)
+);
+
+-- Insert data into the 'Guest' table
+INSERT INTO Guest (GuestNo, GuestName, GuestAddress)
+VALUES
+  (1, 'John Smith', '123 Main St, London'),
+  (2, 'Alice Johnson', '456 Elm St, London'),
+  (3, 'Bob Wilson', '789 Oak St, New York'),
+  (4, 'Charlie Brown', '101 Pine St, New York'),
+  (5, 'David Lee', '222 Park Ave, Los Angeles'),
+  (6, 'Eve Davis', '333 Sunset Blvd, Los Angeles');
+
+1.	List full details of all hotels.
+	SELECT *
+FROM Hotel;
+
+
+2.	How many hotels are there?
+	SELECT COUNT(*) AS num_hotels
+FROM Hotel;
+
+
+3.	List the price and type of all rooms at the Grosvenor Hotel.
+SELECT RoomNo, Type, Price
+FROM Room
+WHERE HotelNo = (
+    SELECT HotelNo
+    FROM Hotel
+    WHERE Name = 'Grosvenor Hotel'
+);
+
+
+4.	List the number of rooms in each hotel.
+SELECT HotelNo, COUNT(*) AS num_rooms
+FROM Room
+GROUP BY HotelNo
+	ORDER BY num_rooms DESC;
+
+5.	Update the price of all rooms by 5%.
+	UPDATE Room
+SET Price = Price * 1.05;
+
+
+6.	List full details of all hotels in London.
+SELECT *
+FROM Hotel
+WHERE City = 'London';
+
+7.	What is the average price of a room?
+	SELECT AVG(Price) AS avg_price
+FROM Room;
+
+
+8.	List all guests currently staying at the Grosvenor Hotel.
+SELECT Guest.GuestName
+FROM Guest
+INNER JOIN Booking ON Guest.GuestNo = Booking.GuestNo
+INNER JOIN Room ON Booking.HotelNo = Room.HotelNo AND Booking.RoomNo = Room.RoomNo
+INNER JOIN Hotel ON Room.HotelNo = Hotel.HotelNo
+WHERE Hotel.Name = 'Grosvenor Hotel';
+
+9.	List the number of rooms in each hotel in London.
+
+SELECT HotelNo, COUNT(*) AS num_rooms
+FROM Room
+WHERE HotelNo IN (
+    SELECT HotelNo
+    FROM Hotel
+    WHERE City = 'London'
+)
+GROUP BY HotelNo
+ORDER BY num_rooms DESC;
+
+10.	Create one view on above database and query it.
+
+CREATE VIEW LondonGuests AS
+SELECT Hotel.Name AS HotelName, Guest.GuestName AS GuestName
+FROM Guest
+INNER JOIN Booking ON Guest.GuestNo = Booking.GuestNo
+INNER JOIN Room ON Booking.HotelNo = Room.HotelNo AND Booking.RoomNo = Room.RoomNo
+INNER JOIN Hotel ON Room.HotelNo = Hotel.HotelNo
+WHERE Hotel.City = 'London';
+
+
+SELECT GuestName
+FROM LondonGuests
+WHERE HotelName = 'Grosvenor Hotel';

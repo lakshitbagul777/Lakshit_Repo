@@ -1,0 +1,107 @@
+a)Write a update, delete trigger on clientmstr table. The System should keep track of the records that ARE BEING updated or deleted. The old value of updated or deleted records should be added in audit_trade table. 
+
+
+CREATE DATABASE client;
+
+use client;
+
+
+CREATE TABLE IF NOT EXISTS clientmstr (
+    client_id INT AUTO_INCREMENT PRIMARY KEY,
+    client_name VARCHAR(255),
+    client_balance DECIMAL(10, 2)
+);
+
+CREATE TABLE IF NOT EXISTS audit_trade (
+    audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT,
+    old_client_name VARCHAR(255),
+    old_client_balance DECIMAL(10, 2),
+    action_type ENUM('UPDATE', 'DELETE'),
+    action_time TIMESTAMP
+);
+
+DELIMITER //
+
+CREATE TRIGGER clientmstr_update_trigger
+AFTER UPDATE ON clientmstr FOR EACH ROW
+BEGIN
+    INSERT INTO audit_trade (client_id, old_client_name, old_client_balance, action_type, action_time)
+    VALUES (OLD.client_id, OLD.client_name, OLD.client_balance, 'UPDATE', NOW());
+END;
+//
+
+
+CREATE TRIGGER clientmstr_delete_trigger
+AFTER DELETE ON clientmstr FOR EACH ROW
+BEGIN
+    INSERT INTO audit_trade (client_id, old_client_name, old_client_balance, action_type, action_time)
+    VALUES (OLD.client_id, OLD.client_name, OLD.client_balance, 'DELETE', NOW());
+END;
+//
+
+
+DELIMITER ;
+
+
+insert into clientmstr values(1,"Prathamesh",20000);
+
+update clientmstr set balance=10000 where client_name="Prathamesh";
+
+
+
+
+b)	Write a before trigger for Insert, update event considering following requirement: Emp(e_no, e_name, salary) I) Trigger action should be initiated when salary is tried to be inserted is less than Rs. 50,000/- II) Trigger action should be initiated when salary is tried to be updated for value less than Rs. 50,000/- Action should be rejection of update or Insert operation by displaying appropriate error message. Also the new values expected to be inserted will be stored in new table Tracking(e_no, salary).
+
+
+ create database employee
+
+use employee;
+
+CREATE TABLE IF NOT EXISTS Emp (
+    e_no INT AUTO_INCREMENT PRIMARY KEY,
+    e_name VARCHAR(255),
+    salary DECIMAL(10, 2)
+);
+
+CREATE TABLE IF NOT EXISTS Tracking (
+    e_no INT,
+    salary DECIMAL(10, 2)
+);
+
+DELIMITER //
+
+CREATE TRIGGER before_emp_insert_trigger
+BEFORE INSERT ON Emp
+FOR EACH ROW
+BEGIN
+    IF NEW.salary < 50000.00 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Salary cannot be less than Rs. 50,000.';
+    ELSE
+        INSERT INTO Tracking (e_no, salary)
+        VALUES (NEW.e_no, NEW.salary);
+    END IF;
+END;
+//
+
+CREATE TRIGGER before_emp_update_trigger
+BEFORE UPDATE ON Emp
+FOR EACH ROW
+BEGIN
+    IF NEW.salary < 50000.00 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Salary cannot be updated to less than Rs. 50,000.';
+    ELSE
+        INSERT INTO Tracking (e_no, salary)
+        VALUES (NEW.e_no, NEW.salary);
+    END IF;
+END;
+//
+
+ insert into emp values(1,"Akshay",10000)//
+
+ insert into emp values(1,"Akshay",100000)//
+
+select * from tracking//
+

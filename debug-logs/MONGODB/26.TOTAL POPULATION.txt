@@ -1,0 +1,29 @@
+Import zip.json:
+
+mongoimport --db yourDBname --collection zipcodes --file path/to/zip.json
+
+mongoimport --jsonArray --db DYPIT --collection students --file "C:\Users\Public\Documents\teachers.json"
+
+mongoimport --jsonArray --db FNQ --collection Sample --file "C:\Users\ov018\OneDrive\Desktop\PrathamDBMS\MONGODB\zip.json"
+
+Replace yourDBname with the name of your MongoDB database.
+
+1.Create a MapReduce function to find total population in each state:
+var mapFunction = function() {
+    emit(this.state, this.pop);
+};
+
+var reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+
+db.zipcodes.mapReduce(
+    mapFunction,
+    reduceFunction,
+    { out: "statePopulation" }
+);
+
+// Query to retrieve the result
+db.statePopulation.find();
+
+

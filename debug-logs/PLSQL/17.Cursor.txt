@@ -1,0 +1,87 @@
+a) The bank manager has decided to activate all those accounts which were previously marked as inactive for performing no transaction in last 365 days. Write a PL/SQ block (using implicit cursor) to update the status of account, display an approximate message based on the no. of rows affected by the update. (Use of %FOUND, %NOTFOUND, %ROWCOUNT)
+
+Answer
+
+ create database cursor_bank;
+ use cursor_bank;
+CREATE TABLE accounts (account_id INT PRIMARY KEY,account_status VARCHAR(20),days_since_last_transaction INT);
+INSERT INTO accounts (account_id, account_status, days_since_last_transaction)VALUES(1, 'Active', 5),    (2, 'Inactive', 400), (3, 'Active', 10),   (4, 'Inactive', 500);
+
+DELIMITER //
+CREATE PROCEDURE UpdateAccountStatus()
+BEGIN
+DECLARE v_updated_count INT;
+UPDATE accounts
+SET account_status = 'Active'
+WHERE days_since_last_transaction > 365;
+SELECT ROW_COUNT() INTO v_updated_count;
+IF v_updated_count = 0 THEN
+SELECT 'No accounts were activated.' AS Message;
+ELSEIF v_updated_count = 1 THEN
+SELECT '1 account was activated.' AS Message;
+ELSE
+SELECT CONCAT(v_updated_count, ' accounts were activated.') AS Message;
+END IF;
+END;
+//
+
+call UpdateAccountStatus();
+//
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+b)Write a PL/SQL block of code using parameterized Cursor, that will merge the data available in the newly created table N_RollCall with the data available in the table O_RollCall. If the data in the first table already exist in the second table then that data should be skipped. output:
+
+Answer
+create database department;
+use department;
+create table oldroll(roll int, Name varchar(20));
+create table newroll(roll int, Name varchar(20));
+insert into newroll values(2,"dhanshree");
+insert into newroll values(5,"asmita");
+insert into oldroll values(2,"hema");
+insert into oldroll values(5,"Aditi");
+insert into oldroll values(4,"srushti");
+insert into oldroll values(5,"asmita");
+
+delimiter $$
+create procedure roll_list()
+begin
+declare a int;
+declare a1 varchar(10);
+declare b int;
+declare b1 varchar(10);
+declare done int default false;
+declare c1 cursor for select roll, name from oldroll;
+declare c2 cursor for select roll, name from newroll;
+declare continue handler for not found set done=true;
+open c1;
+open c2;
+loop1: loop
+fetch c1 into a, a1; 
+if done then
+leave loop1;
+end if;
+loop2: Loop
+fetch c2 into b, b1;
+if done then
+insert into newroll values (a, a1);
+leave loop2;
+end if;
+if a=b and a1=b1 then
+leave loop2;
+end if;
+end loop;
+end loop;
+close c1;
+close c2;
+end $$
+
+call roll_list();
+$$
+
+select * from newroll;
+$$
+
+

@@ -1,0 +1,120 @@
+Create the following tables. Solve queries by SQL
+• Deposit (actno,cname,bname,amount,adate)
+• Branch (bname,city)
+• Customers (cname, city)
+• Borrow(loanno,cname,bname, amount)
+Add primary key and foreign key wherever applicable.
+Insert data into the above created tables.
+
+CREATE TABLE Deposit (
+    actno INT PRIMARY KEY,
+    cname VARCHAR(255),
+    bname VARCHAR(255),
+    amount DECIMAL(10, 2),
+    adate DATE,
+    FOREIGN KEY (cname) REFERENCES Customers(cname),
+    FOREIGN KEY (bname) REFERENCES Branch(bname)
+);
+
+CREATE TABLE Branch (
+    bname VARCHAR(255) PRIMARY KEY,
+    city VARCHAR(255)
+);
+
+CREATE TABLE Customers (
+    cname VARCHAR(255) PRIMARY KEY,
+    city VARCHAR(255)
+);
+
+CREATE TABLE Borrow (
+    loanno INT PRIMARY KEY,
+    cname VARCHAR(255),
+    bname VARCHAR(255),
+    amount DECIMAL(10, 2),
+    FOREIGN KEY (cname) REFERENCES Customers(cname),
+    FOREIGN KEY (bname) REFERENCES Branch(bname)
+);
+
+-- Insert data into the Branch table
+INSERT INTO Branch (bname, city)
+VALUES
+    ('Main', 'Mumbai'),
+    ('Downtown', 'Mumbai'),
+    ('North', 'Delhi'),
+    ('South', 'Chennai'),
+    ('East', 'Kolkata'),
+    ('Karolbagh', 'Delhi'),
+    ('Nagpur', 'Nagpur');
+-- Insert data into the Customers table
+
+INSERT INTO Customers (cname, city)
+VALUES
+    ('Anil', 'Mumbai'),
+    ('Rajesh', 'Mumbai'),
+    ('Sarika', 'Delhi'),
+    ('Pooja', 'Chennai'),
+    ('Amit', 'Kolkata'),
+    ('Sunil', 'Pune'),
+    ('Karan', 'Nagpur');
+-- Insert data into the Deposit table
+INSERT INTO Deposit (actno, cname, bname, amount, adate)
+VALUES
+    (101, 'Anil', 'Main', 5000.00, '2023-11-01'),
+    (102, 'Rajesh', 'Downtown', 7500.00, '2023-11-02'),
+    (103, 'Sarika', 'North', 3000.00, '2023-11-03'),
+    (104, 'Pooja', 'South', 6000.00, '2023-11-04'),
+    (105, 'Amit', 'East', 9000.00, '2023-11-05'),
+    (106, 'Sunil', 'Karolbagh', 4000.00, '2023-11-06'),
+    (107, 'Karan', 'Nagpur', 3000.00, '2023-11-07');
+-- Insert data into the Borrow table
+INSERT INTO Borrow (loanno, cname, bname, amount)
+VALUES
+    (201, 'Anil', 'Main', 2000.00),
+    (202, 'Rajesh', 'Downtown', 3000.00),
+    (203, 'Sarika', 'North', 1500.00),
+    (204, 'Pooja', 'South', 2500.00),
+    (205, 'Amit', 'East', 4000.00),
+    (206, 'Sunil', 'Karolbagh', 3500.00);
+ Solve following queries by SQL
+1. Display customer name having living city Bombay and branch city Nagpur
+
+SELECT c.cname
+FROM Customers c
+JOIN Branch b ON c.city = 'Mumbai' AND b.city = 'Nagpur';
+
+2. Display customer name having same living city as their branch city
+
+SELECT c.cname
+FROM Customers c
+JOIN Branch b ON c.city = b.city;
+
+3. Display customer name who are borrowers as well as depositors and having
+living city Nagpur.
+
+SELECT c.cname
+FROM Customers c
+JOIN Borrow bo ON c.cname = bo.cname
+JOIN Deposit d ON c.cname = d.cname
+WHERE c.city = 'Nagpur';
+
+4. Display borrower names having deposit amount greater than 1000 and loan
+amount greater than 2000
+
+SELECT bo.cname
+FROM Borrow bo
+JOIN Deposit d ON bo.cname = d.cname
+WHERE d.amount > 1000 AND bo.amount > 2000;
+
+5. Display customer name living in the city where branch of depositor sunil is
+located.
+
+SELECT c.cname
+FROM Customers c
+JOIN Deposit d ON c.cname = d.cname
+JOIN Branch b ON d.bname = b.bname
+WHERE d.cname = 'Sunil';
+
+6. Create an index on deposit table
+
+CREATE INDEX idx_deposit ON Deposit(actno);
+
